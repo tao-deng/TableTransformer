@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表格数据提取工具 - Table Transformer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 表格数据提取工具</h1>
+            <p>上传总表和筛选表，自定义提取所需数据</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <div class="upload-card">
+                    <h2>1. 上传总表（数据源）</h2>
+                    <p class="hint">支持 xlsx, xls, csv, tsv 格式</p>
+                    <input type="file" id="sourceFile" accept=".xlsx,.xls,.csv,.tsv" style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('sourceFile').click()">
+                        <span id="sourceFileName">选择文件</span>
+                    </button>
+                    <div id="sourceInfo" class="file-info"></div>
+                </div>
+
+                <div class="upload-card">
+                    <h2>2. 上传筛选表（提取条件）</h2>
+                    <p class="hint">包含需要提取的条目/关键词</p>
+                    <input type="file" id="filterFile" accept=".xlsx,.xls,.csv,.tsv" style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('filterFile').click()">
+                        <span id="filterFileName">选择文件</span>
+                    </button>
+                    <div id="filterInfo" class="file-info"></div>
+                </div>
+            </section>
+
+            <section class="options-section" id="optionsSection" style="display: none;">
+                <h2>提取选项</h2>
+                <div class="options-grid">
+                    <div class="option-item">
+                        <label>选择筛选列（总表）:</label>
+                        <select id="sourceColumn"></select>
+                    </div>
+                    <div class="option-item">
+                        <label>选择筛选条件列（筛选表）:</label>
+                        <select id="filterColumn"></select>
+                    </div>
+                    <div class="option-item">
+                        <label>匹配模式:</label>
+                        <select id="matchMode">
+                            <option value="exact">精确匹配</option>
+                            <option value="contain">包含匹配</option>
+                            <option value="startsWith">开头匹配</option>
+                        </select>
+                    </div>
+                    <div class="option-item">
+                        <label>输出格式:</label>
+                        <select id="outputFormat">
+                            <option value="xlsx">Excel (.xlsx)</option>
+                            <option value="csv">CSV (.csv)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h2>预览筛选条件</h2>
+                <div class="filter-preview" id="filterPreview"></div>
+            </section>
+
+            <section class="action-section" id="actionSection" style="display: none;">
+                <button id="extractBtn" class="action-btn primary">提取数据</button>
+            </section>
+
+            <section class="result-section" id="resultSection" style="display: none;">
+                <h2>提取结果</h2>
+                <div class="result-stats" id="resultStats"></div>
+                <div class="result-preview" id="resultPreview"></div>
+                <button id="downloadBtn" class="action-btn success">下载结果</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>基于 SheetJS 构建 | 纯前端处理，数据不上传服务器</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
