@@ -3,59 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>表格数据提取工具 - Table Transformer</title>
+    <title>表格列提取工具 - Table Transformer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📊 表格数据提取工具</h1>
-            <p>上传总表和筛选表，自定义提取所需数据</p>
+            <h1>📊 表格列提取工具</h1>
+            <p>从总表中提取指定的列，支持批量处理</p>
         </header>
 
         <main>
-            <section class="upload-section">
-                <div class="upload-card">
-                    <h2>1. 上传总表（数据源）</h2>
-                    <p class="hint">支持 xlsx, xls, csv, tsv 格式</p>
-                    <input type="file" id="sourceFile" accept=".xlsx,.xls,.csv,.tsv" style="display: none;">
-                    <button class="upload-btn" onclick="document.getElementById('sourceFile').click()">
-                        <span id="sourceFileName">选择文件</span>
+            <!-- 模板下载 -->
+            <section class="templates-section">
+                <h2>📥 下载模板</h2>
+                <p class="hint">参考正确格式准备你的数据</p>
+                <div class="template-buttons">
+                    <button id="downloadSourceTemplate" class="btn btn-secondary">
+                        📄 总表模板
                     </button>
-                    <div id="sourceInfo" class="file-info"></div>
-                </div>
-
-                <div class="upload-card">
-                    <h2>2. 上传筛选表（提取条件）</h2>
-                    <p class="hint">包含需要提取的条目/关键词</p>
-                    <input type="file" id="filterFile" accept=".xlsx,.xls,.csv,.tsv" style="display: none;">
-                    <button class="upload-btn" onclick="document.getElementById('filterFile').click()">
-                        <span id="filterFileName">选择文件</span>
+                    <button id="downloadFilterTemplate" class="btn btn-secondary">
+                        📋 列名表模板
                     </button>
-                    <div id="filterInfo" class="file-info"></div>
+                    <button id="downloadBatchTemplate" class="btn btn-secondary">
+                        📦 批量配置模板
+                    </button>
                 </div>
             </section>
 
-            <section class="options-section" id="optionsSection" style="display: none;">
-                <h2>提取选项</h2>
-                <div class="options-grid">
-                    <div class="option-item">
-                        <label>选择筛选列（总表）:</label>
-                        <select id="sourceColumn"></select>
+            <!-- 文件上传区 -->
+            <section class="upload-section">
+                <div class="upload-card">
+                    <div class="card-header">
+                        <span class="step-number">1</span>
+                        <h2>上传总表</h2>
                     </div>
-                    <div class="option-item">
-                        <label>选择筛选条件列（筛选表）:</label>
+                    <p class="hint">包含完整数据的源表格（xlsx, xls, csv）</p>
+                    <input type="file" id="sourceFile" accept=".xlsx,.xls,.csv,.tsv">
+                    <label for="sourceFile" class="upload-btn">
+                        <span id="sourceFileName">选择文件</span>
+                    </label>
+                    <div id="sourceInfo" class="file-info"></div>
+                    <div id="sourcePreview" class="data-preview"></div>
+                </div>
+
+                <div class="upload-card">
+                    <div class="card-header">
+                        <span class="step-number">2</span>
+                        <h2>上传列名表（单次提取）</h2>
+                    </div>
+                    <p class="hint">包含需要提取的列名</p>
+                    <input type="file" id="filterFile" accept=".xlsx,.xls,.csv,.tsv">
+                    <label for="filterFile" class="upload-btn">
+                        <span id="filterFileName">选择文件</span>
+                    </label>
+                    <div id="filterInfo" class="file-info"></div>
+                    <div id="filterPreview" class="data-preview"></div>
+                </div>
+
+                <div class="upload-card">
+                    <div class="card-header">
+                        <span class="step-number">3</span>
+                        <h2>上传批量配置表</h2>
+                    </div>
+                    <p class="hint">一次性提取多个不同组合</p>
+                    <input type="file" id="batchFile" accept=".xlsx,.xls,.csv,.tsv">
+                    <label for="batchFile" class="upload-btn">
+                        <span id="batchFileName">选择文件</span>
+                    </label>
+                    <div id="batchInfo" class="file-info"></div>
+                    <div id="batchPreview" class="data-preview"></div>
+                </div>
+            </section>
+
+            <!-- 单次提取设置区 -->
+            <section class="config-section" id="singleConfigSection" style="display: none;">
+                <h2>提取设置</h2>
+
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>列名表中的列:</label>
                         <select id="filterColumn"></select>
                     </div>
-                    <div class="option-item">
-                        <label>匹配模式:</label>
-                        <select id="matchMode">
-                            <option value="exact">精确匹配</option>
-                            <option value="contain">包含匹配</option>
-                            <option value="startsWith">开头匹配</option>
-                        </select>
-                    </div>
-                    <div class="option-item">
+
+                    <div class="config-item">
                         <label>输出格式:</label>
                         <select id="outputFormat">
                             <option value="xlsx">Excel (.xlsx)</option>
@@ -63,22 +94,81 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="filter-values-section">
+                    <h3>将提取的列名预览</h3>
+                    <div id="filterValuesPreview" class="filter-values"></div>
+                </div>
             </section>
 
-            <section class="preview-section" id="previewSection" style="display: none;">
-                <h2>预览筛选条件</h2>
-                <div class="filter-preview" id="filterPreview"></div>
+            <!-- 批量提取设置区 -->
+            <section class="config-section" id="batchConfigSection" style="display: none;">
+                <h2>批量提取设置</h2>
+
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>配置表中列名列的位置:</label>
+                        <select id="batchColumn">
+                            <option value="1">第2列（列名）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-values-section">
+                    <h3>批量配置预览</h3>
+                    <div id="batchConfigPreview" class="filter-values"></div>
+                </div>
             </section>
 
-            <section class="action-section" id="actionSection" style="display: none;">
-                <button id="extractBtn" class="action-btn primary">提取数据</button>
+            <!-- 单次提取操作区 -->
+            <section class="action-section" id="singleActionSection" style="display: none;">
+                <button id="extractBtn" class="btn btn-primary btn-large">
+                    <span class="btn-text">开始提取</span>
+                    <span class="btn-icon">→</span>
+                </button>
             </section>
 
+            <!-- 批量提取操作区 -->
+            <section class="action-section" id="batchActionSection" style="display: none;">
+                <button id="batchExtractBtn" class="btn btn-primary btn-large">
+                    <span class="btn-text">批量提取并下载</span>
+                    <span class="btn-icon">⬇️</span>
+                </button>
+            </section>
+
+            <!-- 列重排区 -->
+            <section class="reorder-section" id="columnReorderSection" style="display: none;">
+                <h2>调整列顺序</h2>
+                <p class="hint">拖拽列名调整输出顺序，或使用箭头按钮</p>
+                <div id="reorderColumnsContainer" class="reorder-columns"></div>
+            </section>
+
+            <!-- 单次结果区 -->
             <section class="result-section" id="resultSection" style="display: none;">
-                <h2>提取结果</h2>
-                <div class="result-stats" id="resultStats"></div>
-                <div class="result-preview" id="resultPreview"></div>
-                <button id="downloadBtn" class="action-btn success">下载结果</button>
+                <div class="result-header">
+                    <h2>提取结果</h2>
+                    <div id="resultStats" class="result-stats"></div>
+                </div>
+                <div id="resultPreview" class="result-preview"></div>
+                <div class="result-actions">
+                    <button id="downloadBtn" class="btn btn-success">
+                        ⬇️ 下载结果
+                    </button>
+                    <button id="singleResetBtn" class="btn btn-secondary">
+                        🔄 重新开始
+                    </button>
+                </div>
+            </section>
+
+            <!-- 批量结果区 -->
+            <section class="result-section" id="batchResultSection" style="display: none;">
+                <h2>批量提取结果</h2>
+                <div id="batchResultPreview" class="result-preview"></div>
+                <div class="result-actions">
+                    <button id="batchResetBtn" class="btn btn-secondary">
+                        🔄 重新开始
+                    </button>
+                </div>
             </section>
         </main>
 
@@ -86,6 +176,9 @@
             <p>基于 SheetJS 构建 | 纯前端处理，数据不上传服务器</p>
         </footer>
     </div>
+
+    <!-- Toast 通知 -->
+    <div id="toast" class="toast"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="app.js"></script>
