@@ -3,183 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>表格列提取工具 - Table Transformer</title>
+    <title>表格列提取工具 — Table Transformer</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- 顶部导航栏 -->
+    <nav class="nav">
+        <div class="nav-brand">
+            <span class="nav-logo">📊</span>
+            <span class="nav-title">Table Transformer</span>
+        </div>
+        <div class="nav-links">
+            <a href="https://github.com/tao-deng/TableTransformer" target="_blank" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                GitHub
+            </a>
+            <a href="https://github.com/tao-deng/TableTransformer/graphs/traffic" target="_blank" class="nav-link nav-link-traffic">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                流量统计
+            </a>
+        </div>
+    </nav>
+
     <div class="container">
-        <header>
-            <h1>📊 表格列提取工具</h1>
-            <p>从总表中提取指定的列，支持批量处理</p>
-        </header>
 
-        <main>
-            <!-- 模板下载 -->
-            <section class="templates-section">
-                <h2>📥 下载模板</h2>
-                <p class="hint">参考正确格式准备你的数据</p>
-                <div class="template-buttons">
-                    <button id="downloadSourceTemplate" class="btn btn-secondary">
-                        📄 总表模板
-                    </button>
-                    <button id="downloadFilterTemplate" class="btn btn-secondary">
-                        📋 列名表模板
-                    </button>
-                    <button id="downloadBatchTemplate" class="btn btn-secondary">
-                        📦 批量配置模板
-                    </button>
-                </div>
-            </section>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-eyebrow">
+                <span class="eyebrow-dot"></span>
+                纯前端工具 · 数据不上传
+            </div>
+            <h1 class="hero-title">表格列提取工具</h1>
+            <p class="hero-sub hero-sub-nowrap">从总表中快速提取任意列，支持单次与批量处理 · 无需安装 · 无需注册</p>
+        </section>
 
-            <!-- 文件上传区 -->
-            <section class="upload-section">
-                <div class="upload-card">
-                    <div class="card-header">
-                        <span class="step-number">1</span>
-                        <h2>上传总表</h2>
+        <!-- 步骤1+2：统一网格 -->
+        <section class="workflow-grid">
+            <!-- 步骤1：上传总表（横跨两列） -->
+            <div class="upload-card card-source" id="card-source">
+                <div class="card-step">1</div>
+                <div class="card-body">
+                    <h3 class="card-title">上传总表</h3>
+                    <p class="card-desc">包含完整数据的源表格文件</p>
+                    <div class="file-drop-zone" id="drop-source">
+                        <input type="file" id="file-source" accept=".xlsx,.xls,.csv,.tsv" hidden>
+                        <label for="file-source" class="drop-label">
+                            <span class="drop-icon">📄</span>
+                            <span class="drop-text">点击选择文件</span>
+                            <span class="drop-formats">.xlsx .xls .csv .tsv</span>
+                        </label>
                     </div>
-                    <p class="hint">包含完整数据的源表格（xlsx, xls, csv）</p>
-                    <input type="file" id="sourceFile" accept=".xlsx,.xls,.csv,.tsv">
-                    <label for="sourceFile" class="upload-btn">
-                        <span id="sourceFileName">选择文件</span>
-                    </label>
-                    <div id="sourceInfo" class="file-info"></div>
-                    <div id="sourcePreview" class="data-preview"></div>
+                    <div class="file-meta" id="meta-source"></div>
+                    <div class="file-preview" id="preview-source"></div>
                 </div>
+            </div>
 
-                <div class="upload-card">
-                    <div class="card-header">
-                        <span class="step-number">2</span>
-                        <h2>上传列名表（单次提取）</h2>
+            <!-- 模式选择分隔线 -->
+            <div class="mode-divider"><span class="mode-divider-text">选择模式</span></div>
+
+            <!-- 步骤2A：单个拆分 -->
+            <div class="upload-card mode-card" id="card-filter">
+                <div class="card-step">2A</div>
+                <div class="card-mode-badge">单个拆分</div>
+                <div class="card-body">
+                    <h3 class="card-title">上传列名表</h3>
+                    <p class="card-desc">包含需要提取的列名</p>
+                    <div class="file-drop-zone" id="drop-filter">
+                        <input type="file" id="file-filter" accept=".xlsx,.xls,.csv,.tsv" hidden>
+                        <label for="file-filter" class="drop-label">
+                            <span class="drop-icon">📋</span>
+                            <span class="drop-text">点击选择文件</span>
+                            <span class="drop-formats">.xlsx .xls .csv .tsv</span>
+                        </label>
                     </div>
-                    <p class="hint">包含需要提取的列名</p>
-                    <input type="file" id="filterFile" accept=".xlsx,.xls,.csv,.tsv">
-                    <label for="filterFile" class="upload-btn">
-                        <span id="filterFileName">选择文件</span>
-                    </label>
-                    <div id="filterInfo" class="file-info"></div>
-                    <div id="filterPreview" class="data-preview"></div>
+                    <div class="file-meta" id="meta-filter"></div>
+                    <div class="file-preview" id="preview-filter"></div>
                 </div>
+            </div>
 
-                <div class="upload-card">
-                    <div class="card-header">
-                        <span class="step-number">3</span>
-                        <h2>上传批量配置表</h2>
+            <!-- 步骤2B：批量模式 -->
+            <div class="upload-card mode-card" id="card-batch">
+                <div class="card-step">2B</div>
+                <div class="card-mode-badge">批量拆分</div>
+                <div class="card-body">
+                    <h3 class="card-title">上传配置表</h3>
+                    <p class="card-desc">多组列名的批量配置</p>
+                    <div class="file-drop-zone" id="drop-batch">
+                        <input type="file" id="file-batch" accept=".xlsx,.xls,.csv,.tsv" hidden>
+                        <label for="file-batch" class="drop-label">
+                            <span class="drop-icon">📦</span>
+                            <span class="drop-text">点击选择文件</span>
+                            <span class="drop-formats">.xlsx .xls .csv .tsv</span>
+                        </label>
                     </div>
-                    <p class="hint">一次性提取多个不同组合</p>
-                    <input type="file" id="batchFile" accept=".xlsx,.xls,.csv,.tsv">
-                    <label for="batchFile" class="upload-btn">
-                        <span id="batchFileName">选择文件</span>
-                    </label>
-                    <div id="batchInfo" class="file-info"></div>
-                    <div id="batchPreview" class="data-preview"></div>
+                    <div class="file-meta" id="meta-batch"></div>
+                    <div class="file-preview" id="preview-batch"></div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- 单次提取设置区 -->
-            <section class="config-section" id="singleConfigSection" style="display: none;">
-                <h2>提取设置</h2>
+        <!-- 批量执行按钮（动态显示） -->
+        <section class="batch-execute-section" id="batch-execute-section" style="display:none;">
+            <button class="btn-accent btn-large" id="btn-batch-extract">
+                <span>批量提取并下载</span>
+                <span class="btn-arrow">↓</span>
+            </button>
+        </section>
 
-                <div class="config-grid">
-                    <div class="config-item">
-                        <label>列名表中的列:</label>
-                        <select id="filterColumn"></select>
-                    </div>
-
-                    <div class="config-item">
-                        <label>输出格式:</label>
-                        <select id="outputFormat">
-                            <option value="xlsx">Excel (.xlsx)</option>
-                            <option value="csv">CSV (.csv)</option>
-                        </select>
-                    </div>
+        <!-- 提取配置 -->
+        <section class="config-panel" id="config-panel" style="display:none;">
+            <div class="config-header">
+                <h2 class="config-title">提取配置</h2>
+                <div class="config-badges">
+                    <span class="badge" id="badge-rows">— 行</span>
+                    <span class="badge" id="badge-cols">— 列</span>
                 </div>
+            </div>
 
-                <div class="filter-values-section">
-                    <h3>将提取的列名预览</h3>
-                    <div id="filterValuesPreview" class="filter-values"></div>
+            <div class="config-row">
+                <div class="config-field">
+                    <label class="field-label">列名所在列</label>
+                    <select class="field-select" id="sel-filter-col"></select>
                 </div>
-            </section>
-
-            <!-- 批量提取设置区 -->
-            <section class="config-section" id="batchConfigSection" style="display: none;">
-                <h2>批量提取设置</h2>
-
-                <div class="config-grid">
-                    <div class="config-item">
-                        <label>配置表中列名列的位置:</label>
-                        <select id="batchColumn">
-                            <option value="1">第2列（列名）</option>
-                        </select>
-                    </div>
+                <div class="config-field">
+                    <label class="field-label">输出格式</label>
+                    <select class="field-select" id="sel-format">
+                        <option value="xlsx">Excel (.xlsx)</option>
+                        <option value="csv">CSV (.csv)</option>
+                    </select>
                 </div>
+            </div>
 
-                <div class="filter-values-section">
-                    <h3>批量配置预览</h3>
-                    <div id="batchConfigPreview" class="filter-values"></div>
+            <!-- 列名预览 -->
+            <div class="col-preview" id="col-preview"></div>
+
+            <!-- 执行按钮 -->
+            <button class="btn-primary" id="btn-extract">
+                <span>开始提取</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </section>
+
+
+
+        <!-- 列重排 -->
+        <section class="reorder-panel" id="reorder-panel" style="display:none;">
+            <div class="reorder-header">
+                <h3 class="reorder-title">调整列顺序</h3>
+                <p class="reorder-hint">拖拽卡片或点击 ← → 调整输出顺序</p>
+            </div>
+            <div class="reorder-track" id="reorder-track"></div>
+        </section>
+
+        <!-- 结果区 -->
+        <section class="result-panel" id="result-panel" style="display:none;">
+            <div class="result-summary">
+                <div class="result-icon">✅</div>
+                <div class="result-text">
+                    <div class="result-headline">提取完成</div>
+                    <div class="result-sub" id="result-stats-text"></div>
                 </div>
-            </section>
-
-            <!-- 单次提取操作区 -->
-            <section class="action-section" id="singleActionSection" style="display: none;">
-                <button id="extractBtn" class="btn btn-primary btn-large">
-                    <span class="btn-text">开始提取</span>
-                    <span class="btn-icon">→</span>
+            </div>
+            <div class="result-table-wrap">
+                <table class="result-table" id="result-table"></table>
+            </div>
+            <div class="result-actions">
+                <button class="btn-primary" id="btn-download">
+                    <span>下载结果</span>
+                    <span class="btn-arrow">↓</span>
                 </button>
-            </section>
+                <button class="btn-ghost" id="btn-reset">重新开始</button>
+            </div>
+        </section>
 
-            <!-- 批量提取操作区 -->
-            <section class="action-section" id="batchActionSection" style="display: none;">
-                <button id="batchExtractBtn" class="btn btn-primary btn-large">
-                    <span class="btn-text">批量提取并下载</span>
-                    <span class="btn-icon">⬇️</span>
+        <!-- 批量结果 -->
+        <section class="result-panel" id="batch-result-panel" style="display:none;">
+            <div class="result-summary">
+                <div class="result-icon">🎉</div>
+                <div class="result-text">
+                    <div class="result-headline">批量提取完成</div>
+                    <div class="result-sub" id="batch-result-stats-text"></div>
+                </div>
+            </div>
+            <div id="batch-result-list" class="batch-result-list"></div>
+            <div class="result-actions">
+                <button class="btn-ghost" id="btn-batch-reset">重新开始</button>
+            </div>
+        </section>
+
+        <!-- 模板下载 -->
+        <section class="templates-strip">
+            <h3 class="templates-heading">下载模板</h3>
+            <div class="templates-row">
+                <button class="tpl-btn" id="tpl-source">
+                    <span class="tpl-icon">📄</span>
+                    <span class="tpl-name">总表模板</span>
                 </button>
-            </section>
+                <button class="tpl-btn" id="tpl-filter">
+                    <span class="tpl-icon">📋</span>
+                    <span class="tpl-name">列名表模板</span>
+                </button>
+                <button class="tpl-btn" id="tpl-batch">
+                    <span class="tpl-icon">📦</span>
+                    <span class="tpl-name">批量配置模板</span>
+                </button>
+            </div>
+        </section>
 
-            <!-- 列重排区 -->
-            <section class="reorder-section" id="columnReorderSection" style="display: none;">
-                <h2>调整列顺序</h2>
-                <p class="hint">拖拽列名调整输出顺序，或使用箭头按钮</p>
-                <div id="reorderColumnsContainer" class="reorder-columns"></div>
-            </section>
+        <!-- 统计概览（简化版） -->
+        <section class="stats-strip stats-strip-simple">
+            <div class="stat-chip">
+                <span class="stat-chip-label">浏览</span>
+                <span class="stat-chip-value"><a href="https://github.com/tao-deng/TableTransformer/graphs/traffic" target="_blank" class="stat-external-link">GitHub →</a></span>
+            </div>
+            <div class="stat-chip-divider"></div>
+            <div class="stat-chip">
+                <span class="stat-chip-label">本机使用</span>
+                <span class="stat-chip-value" id="stat-local-uses">—</span>
+                <span class="stat-chip-unit">次</span>
+            </div>
+            <div class="stat-chip-divider"></div>
+            <div class="stat-chip">
+                <span class="stat-chip-label">已完成</span>
+                <span class="stat-chip-value" id="stat-tasks-done">—</span>
+                <span class="stat-chip-unit">次</span>
+            </div>
+        </section>
 
-            <!-- 单次结果区 -->
-            <section class="result-section" id="resultSection" style="display: none;">
-                <div class="result-header">
-                    <h2>提取结果</h2>
-                    <div id="resultStats" class="result-stats"></div>
-                </div>
-                <div id="resultPreview" class="result-preview"></div>
-                <div class="result-actions">
-                    <button id="downloadBtn" class="btn btn-success">
-                        ⬇️ 下载结果
-                    </button>
-                    <button id="singleResetBtn" class="btn btn-secondary">
-                        🔄 重新开始
-                    </button>
-                </div>
-            </section>
+    </div><!-- /container -->
 
-            <!-- 批量结果区 -->
-            <section class="result-section" id="batchResultSection" style="display: none;">
-                <h2>批量提取结果</h2>
-                <div id="batchResultPreview" class="result-preview"></div>
-                <div class="result-actions">
-                    <button id="batchResetBtn" class="btn btn-secondary">
-                        🔄 重新开始
-                    </button>
-                </div>
-            </section>
-        </main>
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
-        <footer>
-            <p>基于 SheetJS 构建 | 纯前端处理，数据不上传服务器</p>
-        </footer>
-    </div>
-
-    <!-- Toast 通知 -->
-    <div id="toast" class="toast"></div>
-
+    <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="app.js"></script>
 </body>
